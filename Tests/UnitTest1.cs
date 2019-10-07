@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using PriorityQueueLib;
+using System;
 
 namespace Tests
 {
@@ -263,9 +264,29 @@ namespace Tests
             Assert.AreEqual(3, sutPQ.Root.Value);
             Assert.AreEqual(6, sutPQ.Root.LeftChild.Value);
             Assert.AreEqual(10, sutPQ.Root.RightChild.Value);
-
-
-
         }
+
+        [Test]
+        public void PriorityQueue_SimulatingMattiasTestWithALotOFNumsUsingPop()
+        {
+            PriorityQueue<int> sutPQ = new PriorityQueue<int>();
+            Random r = new Random();
+            for(int i = 0; i < 10000; i++)
+            {
+                sutPQ.Add(r.Next(0, i));
+            }
+            var prev = 0;
+            while(sutPQ.Counter > 0)
+            {
+                var min = sutPQ.Pop();
+                if(!(min >= prev))
+                {
+                    Assert.Fail();
+                }
+                prev = min;
+            }
+            Assert.Pass();
+        }
+
     }
 }

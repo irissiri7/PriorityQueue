@@ -3,7 +3,7 @@ using PriorityQueue;
 
 namespace PriorityQueueLib
 {
-    public class PriorityQueue<T> : IPriorityQueue<T> where T : IComparable
+    public class PriorityQueue<T> : IPriorityQueue<T> where T : IComparable, IComparable<T>
     {
         public Node<T> Root { get; private set; }
         public Node<T> Pointer { get; private set; }
@@ -48,7 +48,11 @@ namespace PriorityQueueLib
                 }
                 while (true)
                 {
-                    if (Pointer.Value.CompareTo(Root.Value) == 0)
+                    if(Pointer.Parent == null)
+                    {
+                        break;
+                    }
+                    if (Pointer.Value.CompareTo(Pointer.Parent.Value) == 0)
                     {
                         break;
                     }
@@ -87,6 +91,7 @@ namespace PriorityQueueLib
 
         public T Pop()
         {
+            
             if (Root == null)
             {
                 throw new InvalidOperationException("Invalid operation. PriorityQue is empty.");
@@ -125,6 +130,7 @@ namespace PriorityQueueLib
                 catch
                 {
                     Root = null;
+                    Counter = 0;
                 }
                 return output;
 
