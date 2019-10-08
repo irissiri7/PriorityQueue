@@ -196,17 +196,5 @@ namespace Tests
 
         }
 
-        [Test]
-        public void PriorityQueue_TemporaryTest()
-        {
-            PriorityQueue<int> sutPQ = new PriorityQueue<int>();
-
-            sutPQ.Add(5);
-            sutPQ.Pop();
-
-            Assert.AreEqual(0, sutPQ.Count());
-
-        }
-
     }
 }

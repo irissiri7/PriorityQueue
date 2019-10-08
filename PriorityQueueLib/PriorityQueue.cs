@@ -7,6 +7,7 @@ namespace PriorityQueueLib
     {
         public Node<T> Root { get; private set; }
         public Node<T> Pointer { get; private set; } //A dynamic Node used to navigate through binary tree.
+        
         public int NumOfNodes { get; private set; }
 
         public void Add(T value)
@@ -143,7 +144,7 @@ namespace PriorityQueueLib
                     NumOfNodes--;
                     Heapify();
                 }
-                catch
+                catch (NullReferenceException) //This exception means there is only one Node in the tree, i.e the Root, then we remove it.
                 {
                     Root = null;
                     NumOfNodes = 0;
@@ -163,16 +164,16 @@ namespace PriorityQueueLib
             while (true)
             {
 
-                if (Pointer.LeftChild == null) 
+                if (Pointer.LeftChild == null) //If the Pointer doesent have a LeftChild, this means tree only has Root, no need to heapify, breaking out of method;
                 {
                     break;
                 }
 
-                if (Pointer.RightChild == null)
+                if (Pointer.RightChild == null) //If the Pointer doesent have a RightChild, we will compare with LeftChild
                 {
                     compare = Pointer.LeftChild;
                 }
-                else
+                else //If Pointer has two children, here we find the child highest priority
                 {
                     if (Pointer.LeftChild.Value.CompareTo(Pointer.RightChild.Value) < 0)
                     {
@@ -184,7 +185,7 @@ namespace PriorityQueueLib
                     }
                 }
 
-                if (Pointer.Value.CompareTo(compare.Value) > 0)
+                if (Pointer.Value.CompareTo(compare.Value) > 0) //Checking if we need to swap
                 {
                     T temp = Pointer.Value;
                     Pointer.Value = compare.Value;

@@ -10,6 +10,8 @@ namespace TemporaryConsoleApp
         {
             PriorityQueueTester.TestPriorityQueue(() => new PriorityQueue<int>(), () => new PriorityQueue<string>());
 
+           
+
         }
     }
 }
