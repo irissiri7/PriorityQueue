@@ -57,25 +57,25 @@ namespace PriorityQueueLib
 
                 }
                 //After inserting new Node, check weather we should swap values with parent node, continuing until
-                //reaching break point.
+                //reaching a break point.
+
                 while (true)
                 {
-                    if(Pointer.Parent == null)
-                    {
-                        break;
+                    try 
+                    { 
+                        if (Pointer.Value.CompareTo(Pointer.Parent.Value) < 0) //Here we swap if need be
+                        {
+                            T temp = Pointer.Value;
+                            Pointer.Value = Pointer.Parent.Value;
+                            Pointer.Parent.Value = temp;
+                            Pointer = Pointer.Parent;
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
-                    if (Pointer.Value.CompareTo(Pointer.Parent.Value) == 0)
-                    {
-                        break;
-                    }
-                    if (Pointer.Value.CompareTo(Pointer.Parent.Value) < 0) //Here we swap if need be
-                    {
-                        T temp = Pointer.Value;
-                        Pointer.Value = Pointer.Parent.Value;
-                        Pointer.Parent.Value = temp;
-                        Pointer = Pointer.Parent;
-                    }
-                    else
+                    catch(NullReferenceException) //If there is no parent, i.e Pointer is actually Root
                     {
                         break;
                     }
@@ -84,10 +84,7 @@ namespace PriorityQueueLib
             }
         }
 
-        public int Count()
-        {
-            return NumOfNodes;
-        }
+        public int Count() => NumOfNodes;
 
         public T Peek()
         {
@@ -110,7 +107,7 @@ namespace PriorityQueueLib
             }
             else
             {
-                T output = Root.Value; //Saving the root value to give back at end of method
+                T output = Root.Value; //Saving the Root value to give back at end of method
                 
                 Pointer = Root;
                 //Again, using binary representation of numOfNodes to find the way to which node to Pop, i.e Node furthest down in the "tree"
@@ -127,9 +124,9 @@ namespace PriorityQueueLib
                     }
                 }
                 
-                Root.Value = Pointer.Value; //Root value becomes the value of this Node
+                Root.Value = Pointer.Value; //Root value becomes the value of that Node
                 
-                //Then removing this Node from tree
+                //Then removing the Node from tree
                 try
                 {
                     if (Pointer.Parent.LeftChild == Pointer)
