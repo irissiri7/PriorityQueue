@@ -7,19 +7,23 @@ namespace PriorityQueueLib
     {
         public Node<T> Root { get; private set; }
         public Node<T> Pointer { get; private set; }
-        public int Counter { get; private set; }
+        public int NumOfNodes { get; private set; }
 
         public void Add(T value)
         {
             if (Root == null)
             {
                 Root = new Node<T>(value);
-                Counter++;
+                NumOfNodes++;
             }
             else
             {
                 Pointer = Root;
-                string binaryCounter = Convert.ToString(Counter + 1, 2);
+
+                //Finding where to insert next Node with the binary 
+                //representation of numOfNodes + 1 (skipping first number)
+                string binaryCounter = Convert.ToString(NumOfNodes + 1, 2);
+                
                 for (int i = 1; i < binaryCounter.Length; i++)
                 {
                     if (binaryCounter[i] == '0')
@@ -28,7 +32,7 @@ namespace PriorityQueueLib
                         {
                             Pointer.LeftChild = new Node<T>(value);
                             Pointer.LeftChild.Parent = Pointer;
-                            Counter++;
+                            NumOfNodes++;
 
                         }
                         Pointer = Pointer.LeftChild;
@@ -39,7 +43,7 @@ namespace PriorityQueueLib
                         {
                             Pointer.RightChild = new Node<T>(value);
                             Pointer.RightChild.Parent = Pointer;
-                            Counter++;
+                            NumOfNodes++;
 
                         }
                         Pointer = Pointer.RightChild;
@@ -74,7 +78,7 @@ namespace PriorityQueueLib
 
         public int Count()
         {
-            return Counter;
+            return NumOfNodes;
         }
 
         public T Peek()
@@ -100,7 +104,8 @@ namespace PriorityQueueLib
             {
                 T output = Root.Value;
                 Pointer = Root;
-                string binaryCount = Convert.ToString(Counter, 2);
+                
+                string binaryCount = Convert.ToString(NumOfNodes, 2);
                 for (int i = 1; i < binaryCount.Length; i++)
                 {
                     if (binaryCount[i] == '0')
@@ -124,16 +129,15 @@ namespace PriorityQueueLib
                         Pointer.Parent.RightChild = null;
 
                     }
-                    Counter--;
+                    NumOfNodes--;
                     Heapify();
                 }
                 catch
                 {
                     Root = null;
-                    Counter = 0;
+                    NumOfNodes = 0;
                 }
                 return output;
-
             }
 
 
