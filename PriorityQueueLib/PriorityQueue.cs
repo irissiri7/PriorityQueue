@@ -58,7 +58,6 @@ namespace PriorityQueueLib
                 }
                 //After inserting new Node, check weather we should swap values with parent node, continuing until
                 //reaching a break point.
-
                 while (true)
                 {
                     try 
@@ -170,7 +169,7 @@ namespace PriorityQueueLib
                 {
                     compare = Pointer.LeftChild;
                 }
-                else //If Pointer has two children, here we find the child highest priority
+                else //If Pointer has two children, here we find the child with highest priority
                 {
                     if (Pointer.LeftChild.Value.CompareTo(Pointer.RightChild.Value) < 0)
                     {
