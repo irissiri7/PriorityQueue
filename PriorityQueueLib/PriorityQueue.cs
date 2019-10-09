@@ -18,7 +18,7 @@ namespace PriorityQueueLib
             }
             else
             {
-                var pointer = Root;
+                Node<T> pointer = Root;
 
                 //Finding where to insert next Node with binary representation of 
                 //NumOfNodes, 0 = go left, 1 = go right
@@ -48,7 +48,7 @@ namespace PriorityQueueLib
                         pointer = pointer.RightChild;
                     }
                 }
-                //////////////////////////////////////////////
+                
                 //After inserting new Node, check weather we should swap values with parent node
                 while (true)
                 {
@@ -94,10 +94,10 @@ namespace PriorityQueueLib
             }
             else
             {
-                T output = Root.Value; //Saving the Root value to give back at end of method
+                T output = Root.Value;
                 
                 var pointer = Root;
-                //Again, using binary representation of numOfNodes to find the way to which node to Pop, i.e Node furthest down in the "tree"
+                //Again, using binary representation of numOfNodes to navigate the tree
                 string binaryCount = Convert.ToString(NumOfNodes, 2);
                 for (int i = 1; i < binaryCount.Length; i++)
                 {
@@ -111,35 +111,29 @@ namespace PriorityQueueLib
                     }
                 }
                 
-                Root.Value = pointer.Value; //Root value becomes the value of that Node
-                
-                //Then removing the Node from tree
-                try
-                {
-                    if (pointer.Parent.LeftChild == pointer)
-                    {
-                        pointer.Parent.LeftChild = null;
-                    }
-                    else
-                    {
-                        pointer.Parent.RightChild = null;
+                Root.Value = pointer.Value;
 
-                    }
-                    NumOfNodes--;
-                    Heapify();
-                }
-                catch (NullReferenceException) //This exception means there is only one Node in the tree, i.e the Root, then we remove it.
+                //Then removing the Node from tree
+                if(pointer.Parent == null)
                 {
                     Root = null;
-                    NumOfNodes = 0;
                 }
+                else if (pointer.Parent.LeftChild == pointer)
+                {
+                    pointer.Parent.LeftChild = null;
+                    Heapify();
+                }
+                else
+                {
+                    pointer.Parent.RightChild = null;
+                    Heapify();
+                }
+                NumOfNodes--;
                 return output;
             }
-
-
         }
 
-        //A method for "pushing down" a value from Root further down the tree, to appropriate position.
+        //A method for "pushing down" a value further down the tree, to appropriate position.
         private void Heapify()
         {
             Node<T> compare;
