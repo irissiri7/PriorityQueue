@@ -6,10 +6,9 @@ namespace PriorityQueueLib
     public class PriorityQueue<T> : IPriorityQueue<T> where T : IComparable, IComparable<T>
     {
         public Node<T> Root { get; private set; }
-        public Node<T> Pointer { get; private set; } //A dynamic Node used to navigate through binary tree.
-        
         public int NumOfNodes { get; private set; }
 
+        
         public void Add(T value)
         {
             if (Root == null)
@@ -19,67 +18,56 @@ namespace PriorityQueueLib
             }
             else
             {
-                Pointer = Root;
+                var pointer = Root;
 
-                //Finding where to insert next Node with the binary 
-                //representation of numOfNodes + 1 (skipping first number).
-                //0 = go to left child, 1 = go to right child
-                string binaryCounter = Convert.ToString(NumOfNodes + 1, 2);
-                
+                //Finding where to insert next Node with binary representation of 
+                //NumOfNodes, 0 = go left, 1 = go right
+                string binaryCounter = Convert.ToString(NumOfNodes + 1, 2); 
                 for (int i = 1; i < binaryCounter.Length; i++)
                 {
                     if (binaryCounter[i] == '0')
                     {
-                        //If empty Node, creating new Node here...
-                        if (Pointer.LeftChild == null)
+                        if (pointer.LeftChild == null)
                         {
-                            Pointer.LeftChild = new Node<T>(value);
-                            Pointer.LeftChild.Parent = Pointer;
+                            pointer.LeftChild = new Node<T>(value);
+                            pointer.LeftChild.Parent = pointer;
                             NumOfNodes++;
 
                         }
-                        //...else moving the pointer to this position and continue loop
-                        Pointer = Pointer.LeftChild;
+                        pointer = pointer.LeftChild;
                     }
                     else
                     {
-                        //If empty Node, creating new Node here...
-                        if (Pointer.RightChild == null)
+                        if (pointer.RightChild == null)
                         {
-                            Pointer.RightChild = new Node<T>(value);
-                            Pointer.RightChild.Parent = Pointer;
+                            pointer.RightChild = new Node<T>(value);
+                            pointer.RightChild.Parent = pointer;
                             NumOfNodes++;
 
                         }
-                        //...else moving the pointer to this position and continue loop
-                        Pointer = Pointer.RightChild;
+                        pointer = pointer.RightChild;
                     }
-
                 }
-                //After inserting new Node, check weather we should swap values with parent node, continuing until
-                //reaching a break point.
+                //////////////////////////////////////////////
+                //After inserting new Node, check weather we should swap values with parent node
                 while (true)
                 {
-                    try 
-                    { 
-                        if (Pointer.Value.CompareTo(Pointer.Parent.Value) < 0) //Here we swap if need be
-                        {
-                            T temp = Pointer.Value;
-                            Pointer.Value = Pointer.Parent.Value;
-                            Pointer.Parent.Value = temp;
-                            Pointer = Pointer.Parent;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                    if(pointer.Parent == null)
+                    {
+                        break;
                     }
-                    catch(NullReferenceException) //If there is no parent, i.e Pointer is actually Root
+                    else if (pointer.Value.CompareTo(pointer.Parent.Value) < 0)
+                    {
+                        T tempHolder = pointer.Value;
+                        pointer.Value = pointer.Parent.Value;
+                        pointer.Parent.Value = tempHolder;
+                        pointer = pointer.Parent;
+                    }
+                    else
                     {
                         break;
                     }
                 }
-
             }
         }
 
@@ -108,33 +96,33 @@ namespace PriorityQueueLib
             {
                 T output = Root.Value; //Saving the Root value to give back at end of method
                 
-                Pointer = Root;
+                var pointer = Root;
                 //Again, using binary representation of numOfNodes to find the way to which node to Pop, i.e Node furthest down in the "tree"
                 string binaryCount = Convert.ToString(NumOfNodes, 2);
                 for (int i = 1; i < binaryCount.Length; i++)
                 {
                     if (binaryCount[i] == '0')
                     {
-                        Pointer = Pointer.LeftChild;
+                        pointer = pointer.LeftChild;
                     }
                     else
                     {
-                        Pointer = Pointer.RightChild;
+                        pointer = pointer.RightChild;
                     }
                 }
                 
-                Root.Value = Pointer.Value; //Root value becomes the value of that Node
+                Root.Value = pointer.Value; //Root value becomes the value of that Node
                 
                 //Then removing the Node from tree
                 try
                 {
-                    if (Pointer.Parent.LeftChild == Pointer)
+                    if (pointer.Parent.LeftChild == pointer)
                     {
-                        Pointer.Parent.LeftChild = null;
+                        pointer.Parent.LeftChild = null;
                     }
                     else
                     {
-                        Pointer.Parent.RightChild = null;
+                        pointer.Parent.RightChild = null;
 
                     }
                     NumOfNodes--;
@@ -155,38 +143,38 @@ namespace PriorityQueueLib
         private void Heapify()
         {
             Node<T> compare;
-            Pointer = Root;
+            var pointer = Root;
 
             while (true)
             {
 
-                if (Pointer.LeftChild == null) //If the Pointer doesent have a LeftChild, this means tree only has Root, no need to heapify, breaking out of method;
+                if (pointer.LeftChild == null) //If the Pointer doesent have a LeftChild, this means tree only has Root, no need to heapify, breaking out of method;
                 {
                     break;
                 }
 
-                if (Pointer.RightChild == null) //If the Pointer doesent have a RightChild, we will compare with LeftChild
+                if (pointer.RightChild == null) //If the Pointer doesent have a RightChild, we will compare with LeftChild
                 {
-                    compare = Pointer.LeftChild;
+                    compare = pointer.LeftChild;
                 }
                 else //If Pointer has two children, here we find the child with highest priority
                 {
-                    if (Pointer.LeftChild.Value.CompareTo(Pointer.RightChild.Value) < 0)
+                    if (pointer.LeftChild.Value.CompareTo(pointer.RightChild.Value) < 0)
                     {
-                        compare = Pointer.LeftChild;
+                        compare = pointer.LeftChild;
                     }
                     else
                     {
-                        compare = Pointer.RightChild;
+                        compare = pointer.RightChild;
                     }
                 }
 
-                if (Pointer.Value.CompareTo(compare.Value) > 0) //Checking if we need to swap
+                if (pointer.Value.CompareTo(compare.Value) > 0) //Checking if we need to swap
                 {
-                    T temp = Pointer.Value;
-                    Pointer.Value = compare.Value;
-                    compare.Value = temp;
-                    Pointer = compare;
+                    T tempHolder = pointer.Value;
+                    pointer.Value = compare.Value;
+                    compare.Value = tempHolder;
+                    pointer = compare;
                 }
                 else
                 {

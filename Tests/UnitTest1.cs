@@ -196,5 +196,31 @@ namespace Tests
 
         }
 
+        [Test]
+        public void PriorityQueue_AddingALotOfTheSameNumbers()
+        {
+            PriorityQueue<int> sutPQ = new PriorityQueue<int>();
+
+            for (int i = 0; i < 10000; i++)
+            {
+                sutPQ.Add(5);
+            }
+
+            Assert.AreEqual(10000, sutPQ.Count());
+        }
+
+        [Test]
+        public void PriorityQueue_AddingALotOfTheSameStrings()
+        {
+            PriorityQueue<string> sutPQ = new PriorityQueue<string>();
+
+            for (int i = 0; i < 10000; i++)
+            {
+                sutPQ.Add("Lydia");
+            }
+
+            Assert.AreEqual(10000, sutPQ.Count());
+        }
+
     }
 }
