@@ -119,7 +119,7 @@ namespace PriorityQueueLib
                 
                 Root.Value = pointer.Value;
 
-                //Removing the Node from tree
+                //Removing Node from tree
                 if(pointer.Parent == null)
                 {
                     Root = null;
