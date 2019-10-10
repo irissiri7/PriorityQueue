@@ -8,74 +8,6 @@ namespace PriorityQueueLib
         public Node<T> Root { get; private set; }
         public int NumOfNodes { get; private set; }
 
-        
-        public void Add(T value)
-        {
-            if (Root == null)
-            {
-                Root = new Node<T>(value);
-                NumOfNodes++;
-            }
-            else
-            {
-                Node<T> pointer = Root;
-
-                //Finding where to insert next Node with binary representation of 
-                //NumOfNodes, 0 = go left, 1 = go right
-                string binaryCounter = Convert.ToString(NumOfNodes + 1, 2); 
-                for (int i = 1; i < binaryCounter.Length; i++)
-                {
-                    if (binaryCounter[i] == '0')
-                    {
-                        if (pointer.LeftChild == null)
-                        {
-                            pointer.LeftChild = new Node<T>(value);
-                            pointer.LeftChild.Parent = pointer;
-                            NumOfNodes++;
-
-                        }
-                        pointer = pointer.LeftChild;
-                    }
-                    else
-                    {
-                        if (pointer.RightChild == null)
-                        {
-                            pointer.RightChild = new Node<T>(value);
-                            pointer.RightChild.Parent = pointer;
-                            NumOfNodes++;
-
-                        }
-                        pointer = pointer.RightChild;
-                    }
-                }
-                
-                //Check weather to swap values with parent node
-                while (true)
-                {
-                    if(pointer.Parent == null)
-                    {
-                        break;
-                    }
-                    else if(pointer.Value.CompareTo(pointer.Parent.Value) < 0)
-                    {
-                        pointer = Swap(pointer, pointer.Parent);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-
-        public static Node<T> Swap(Node<T> pointer, Node<T> comparerNode)
-        {
-            T tempHolder = pointer.Value;
-            pointer.Value = comparerNode.Value;
-            comparerNode.Value = tempHolder;
-            pointer = comparerNode;
-            return pointer;
-        }
 
         public int Count() => NumOfNodes;
 
@@ -91,9 +23,37 @@ namespace PriorityQueueLib
             }
         }
 
+        public void Add(T value)
+        {
+            if (Root == null)
+            {
+                Root = new Node<T>(value);
+                NumOfNodes++;
+            }
+            else
+            {
+                Node<T> parent = FindParentForNewNode(Root);
+
+                if (parent.LeftChild == null)
+                {
+                    parent.LeftChild = new Node<T>(value);
+                    parent.LeftChild.Parent = parent;
+                    NumOfNodes++;
+                    BubbelUp();
+                }
+                else
+                {
+                    parent.RightChild = new Node<T>(value);
+                    parent.RightChild.Parent = parent;
+                    NumOfNodes++;
+                    BubbelUp();
+                }
+            }
+        }
+
         public T Pop()
         {
-            
+
             if (Root == null)
             {
                 throw new InvalidOperationException("Invalid operation. PriorityQue is empty.");
@@ -101,42 +61,114 @@ namespace PriorityQueueLib
             else
             {
                 T output = Root.Value;
-                
-                var pointer = Root;
-                //Again, using binary representation of numOfNodes to navigate the tree
-                string binaryCount = Convert.ToString(NumOfNodes, 2);
-                for (int i = 1; i < binaryCount.Length; i++)
-                {
-                    if (binaryCount[i] == '0')
-                    {
-                        pointer = pointer.LeftChild;
-                    }
-                    else
-                    {
-                        pointer = pointer.RightChild;
-                    }
-                }
-                
-                Root.Value = pointer.Value;
 
-                //Removing Node from tree
-                if(pointer.Parent == null)
+                Node<T> lastNode = GetLastNodeInTree();
+
+                Root.Value = lastNode.Value;
+
+                if (lastNode.Parent == null)
                 {
                     Root = null;
                 }
-                else if (pointer.Parent.LeftChild == pointer)
+                else if (lastNode.Parent.LeftChild == lastNode)
                 {
-                    pointer.Parent.LeftChild = null;
+                    lastNode.Parent.LeftChild = null;
                     Heapify();
                 }
                 else
                 {
-                    pointer.Parent.RightChild = null;
+                    lastNode.Parent.RightChild = null;
                     Heapify();
                 }
+
                 NumOfNodes--;
                 return output;
             }
+        }
+
+
+        //This method uses the binary representation of NumOfNodes to find the parent Node for a new Node.
+        //0 = go left, 1 = go right. Note that the first number is skipped and that we use NumOfNodes + 1;
+        public Node<T> FindParentForNewNode(Node<T> start)
+        {
+            Node<T> pointer = start;
+            Node<T> parentForNewNode = null;
+
+            string binaryCounter = Convert.ToString(NumOfNodes + 1, 2);
+
+            for (int i = 1; i < binaryCounter.Length; i++)
+            {
+                bool canGoLeft = (binaryCounter[i] == '0' && pointer.LeftChild != null);
+                bool canGoRight = (binaryCounter[i] == '1' && pointer.RightChild != null);
+
+                if (canGoLeft)
+                {
+                    pointer = pointer.LeftChild;
+                }
+                else if (canGoRight)
+                {
+                    pointer = pointer.RightChild;
+                }
+                else
+                {
+                    parentForNewNode = pointer;
+                }
+            }
+
+            return parentForNewNode;
+        }
+
+        //This method will look at the last added Node in the tree and "bubbel it up" to the right position
+        public void BubbelUp()
+        {
+            Node<T> lastNode = GetLastNodeInTree();
+
+            while (true)
+            {
+                if (lastNode.Parent == null)
+                {
+                    break;
+                }
+                else if (lastNode.Value.CompareTo(lastNode.Parent.Value) < 0)
+                {
+                    lastNode = Swap(lastNode, lastNode.Parent);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        //This method uses the binary representation of NumOfNodes to navigate to the last Node in the tree
+        //0 = go left, 1 = go right. Note that the first number is skipped
+        public Node<T> GetLastNodeInTree()
+        {
+            Node<T> pointer = Root;
+            string binaryCount = Convert.ToString(NumOfNodes, 2);
+            for (int i = 1; i < binaryCount.Length; i++)
+            {
+                if (binaryCount[i] == '0')
+                {
+                    pointer = pointer.LeftChild;
+                }
+                else
+                {
+                    pointer = pointer.RightChild;
+                }
+            }
+
+            return pointer;
+        }
+
+        //Basic swapping-method
+        public static Node<T> Swap(Node<T> pointer, Node<T> comparerNode)
+        {
+            T tempHolder = pointer.Value;
+            pointer.Value = comparerNode.Value;
+            comparerNode.Value = tempHolder;
+            pointer = comparerNode;
+            return pointer;
         }
 
         //A method for "pushing down" a value further down the tree, to appropriate position.
@@ -147,16 +179,18 @@ namespace PriorityQueueLib
 
             while (true)
             {
-
+                //If there is no left child, we know there are no children, i.e only root, and we exit method.
                 if (pointer.LeftChild == null)
                 {
                     break;
                 }
 
+                //If there is no right child we know we will be comparing with left child
                 if (pointer.RightChild == null)
                 {
                     comparer = pointer.LeftChild;
                 }
+                //If there is both a left and right child, we compare which of the children has highest priority
                 else
                 {
                     if (pointer.LeftChild.Value.CompareTo(pointer.RightChild.Value) < 0)
@@ -169,6 +203,7 @@ namespace PriorityQueueLib
                     }
                 }
 
+                //Finally checking if we need to swap
                 if (pointer.Value.CompareTo(comparer.Value) > 0)
                 {
                     pointer = Swap(pointer, comparer);
