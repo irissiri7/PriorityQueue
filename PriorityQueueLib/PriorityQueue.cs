@@ -49,19 +49,16 @@ namespace PriorityQueueLib
                     }
                 }
                 
-                //After inserting new Node, check weather we should swap values with parent node
+                //Check weather to swap values with parent node
                 while (true)
                 {
                     if(pointer.Parent == null)
                     {
                         break;
                     }
-                    else if (pointer.Value.CompareTo(pointer.Parent.Value) < 0)
+                    else if(pointer.Value.CompareTo(pointer.Parent.Value) < 0)
                     {
-                        T tempHolder = pointer.Value;
-                        pointer.Value = pointer.Parent.Value;
-                        pointer.Parent.Value = tempHolder;
-                        pointer = pointer.Parent;
+                        pointer = Swap(pointer, pointer.Parent);
                     }
                     else
                     {
@@ -69,6 +66,15 @@ namespace PriorityQueueLib
                     }
                 }
             }
+        }
+
+        public static Node<T> Swap(Node<T> pointer, Node<T> comparerNode)
+        {
+            T tempHolder = pointer.Value;
+            pointer.Value = comparerNode.Value;
+            comparerNode.Value = tempHolder;
+            pointer = comparerNode;
+            return pointer;
         }
 
         public int Count() => NumOfNodes;
@@ -113,7 +119,7 @@ namespace PriorityQueueLib
                 
                 Root.Value = pointer.Value;
 
-                //Then removing the Node from tree
+                //Removing the Node from tree
                 if(pointer.Parent == null)
                 {
                     Root = null;
@@ -136,39 +142,36 @@ namespace PriorityQueueLib
         //A method for "pushing down" a value further down the tree, to appropriate position.
         private void Heapify()
         {
-            Node<T> compare;
+            Node<T> comparer;
             var pointer = Root;
 
             while (true)
             {
 
-                if (pointer.LeftChild == null) //If the Pointer doesent have a LeftChild, this means tree only has Root, no need to heapify, breaking out of method;
+                if (pointer.LeftChild == null)
                 {
                     break;
                 }
 
-                if (pointer.RightChild == null) //If the Pointer doesent have a RightChild, we will compare with LeftChild
+                if (pointer.RightChild == null)
                 {
-                    compare = pointer.LeftChild;
+                    comparer = pointer.LeftChild;
                 }
-                else //If Pointer has two children, here we find the child with highest priority
+                else
                 {
                     if (pointer.LeftChild.Value.CompareTo(pointer.RightChild.Value) < 0)
                     {
-                        compare = pointer.LeftChild;
+                        comparer = pointer.LeftChild;
                     }
                     else
                     {
-                        compare = pointer.RightChild;
+                        comparer = pointer.RightChild;
                     }
                 }
 
-                if (pointer.Value.CompareTo(compare.Value) > 0) //Checking if we need to swap
+                if (pointer.Value.CompareTo(comparer.Value) > 0)
                 {
-                    T tempHolder = pointer.Value;
-                    pointer.Value = compare.Value;
-                    compare.Value = tempHolder;
-                    pointer = compare;
+                    pointer = Swap(pointer, comparer);
                 }
                 else
                 {

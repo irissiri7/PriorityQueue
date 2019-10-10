@@ -10,7 +10,8 @@ namespace TemporaryConsoleApp
         {
             PriorityQueueTester.TestPriorityQueue(() => new PriorityQueue<int>(), () => new PriorityQueue<string>());
             //PriorityQueue<int> myPQ = new PriorityQueue<int>();
-            //myPQ.Pop();
+
+            
         }
     }
 }
