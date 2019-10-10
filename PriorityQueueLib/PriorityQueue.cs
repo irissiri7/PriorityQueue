@@ -27,8 +27,7 @@ namespace PriorityQueueLib
         {
             if (Root == null)
             {
-                Root = new Node<T>(value);
-                NumOfNodes++;
+                Root = CreateNewNode(value);
             }
             else
             {
@@ -36,16 +35,14 @@ namespace PriorityQueueLib
 
                 if (parent.LeftChild == null)
                 {
-                    parent.LeftChild = new Node<T>(value);
+                    parent.LeftChild = CreateNewNode(value);
                     parent.LeftChild.Parent = parent;
-                    NumOfNodes++;
                     BubbelUp();
                 }
                 else
                 {
-                    parent.RightChild = new Node<T>(value);
+                    parent.RightChild = CreateNewNode(value);
                     parent.RightChild.Parent = parent;
-                    NumOfNodes++;
                     BubbelUp();
                 }
             }
@@ -66,22 +63,8 @@ namespace PriorityQueueLib
 
                 Root.Value = lastNode.Value;
 
-                if (lastNode.Parent == null)
-                {
-                    Root = null;
-                }
-                else if (lastNode.Parent.LeftChild == lastNode)
-                {
-                    lastNode.Parent.LeftChild = null;
-                    Heapify();
-                }
-                else
-                {
-                    lastNode.Parent.RightChild = null;
-                    Heapify();
-                }
+                RemoveNode(lastNode);
 
-                NumOfNodes--;
                 return output;
             }
         }
@@ -89,7 +72,7 @@ namespace PriorityQueueLib
 
         //This method uses the binary representation of NumOfNodes to find the parent Node for a new Node.
         //0 = go left, 1 = go right. Note that the first number is skipped and that we use NumOfNodes + 1;
-        public Node<T> FindParentForNewNode(Node<T> start)
+        private Node<T> FindParentForNewNode(Node<T> start)
         {
             Node<T> pointer = start;
             Node<T> parentForNewNode = null;
@@ -98,14 +81,14 @@ namespace PriorityQueueLib
 
             for (int i = 1; i < binaryCounter.Length; i++)
             {
-                bool canGoLeft = (binaryCounter[i] == '0' && pointer.LeftChild != null);
-                bool canGoRight = (binaryCounter[i] == '1' && pointer.RightChild != null);
+                bool shouldGoLeft = (binaryCounter[i] == '0' && pointer.LeftChild != null);
+                bool shouldGoRight = (binaryCounter[i] == '1' && pointer.RightChild != null);
 
-                if (canGoLeft)
+                if (shouldGoLeft)
                 {
                     pointer = pointer.LeftChild;
                 }
-                else if (canGoRight)
+                else if (shouldGoRight)
                 {
                     pointer = pointer.RightChild;
                 }
@@ -118,8 +101,14 @@ namespace PriorityQueueLib
             return parentForNewNode;
         }
 
+        private Node<T> CreateNewNode(T value)
+        {
+            NumOfNodes++;
+            return new Node<T>(value);
+        }
+
         //This method will look at the last added Node in the tree and "bubbel it up" to the right position
-        public void BubbelUp()
+        private void BubbelUp()
         {
             Node<T> lastNode = GetLastNodeInTree();
 
@@ -142,7 +131,7 @@ namespace PriorityQueueLib
 
         //This method uses the binary representation of NumOfNodes to navigate to the last Node in the tree
         //0 = go left, 1 = go right. Note that the first number is skipped
-        public Node<T> GetLastNodeInTree()
+        private Node<T> GetLastNodeInTree()
         {
             Node<T> pointer = Root;
             string binaryCount = Convert.ToString(NumOfNodes, 2);
@@ -162,13 +151,33 @@ namespace PriorityQueueLib
         }
 
         //Basic swapping-method
-        public static Node<T> Swap(Node<T> pointer, Node<T> comparerNode)
+        private static Node<T> Swap(Node<T> pointer, Node<T> comparerNode)
         {
             T tempHolder = pointer.Value;
             pointer.Value = comparerNode.Value;
             comparerNode.Value = tempHolder;
             pointer = comparerNode;
             return pointer;
+        }
+
+        private void RemoveNode(Node<T> nodeToRemove)
+        {
+            if (nodeToRemove.Parent == null)
+            {
+                Root = null;
+            }
+            else if (nodeToRemove.Parent.LeftChild == nodeToRemove)
+            {
+                nodeToRemove.Parent.LeftChild = null;
+                Heapify();
+            }
+            else
+            {
+                nodeToRemove.Parent.RightChild = null;
+                Heapify();
+            }
+
+            NumOfNodes--;
         }
 
         //A method for "pushing down" a value further down the tree, to appropriate position.
@@ -215,6 +224,5 @@ namespace PriorityQueueLib
 
             }
         }
-
     }
 }
