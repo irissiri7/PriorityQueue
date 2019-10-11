@@ -134,7 +134,9 @@ namespace PriorityQueueLib
         private Node<T> GetLastNodeInTree()
         {
             Node<T> pointer = Root;
+            
             string binaryCount = Convert.ToString(NumOfNodes, 2);
+            
             for (int i = 1; i < binaryCount.Length; i++)
             {
                 if (binaryCount[i] == '0')
@@ -150,7 +152,6 @@ namespace PriorityQueueLib
             return pointer;
         }
 
-        //Basic swapping-method
         private static Node<T> Swap(Node<T> pointer, Node<T> comparerNode)
         {
             T tempHolder = pointer.Value;

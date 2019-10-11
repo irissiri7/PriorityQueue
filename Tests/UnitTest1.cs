@@ -33,26 +33,17 @@ namespace Tests
         {
             PriorityQueue<int> sutPQ = new PriorityQueue<int>();
 
-            Random r = new Random();
-            for (int i = 0; i < 10000; i++)
-            {
-                sutPQ.Add(r.Next(0, i));
-            }
+            Add10000RandomPositiveValues(sutPQ);
 
             Assert.AreEqual(10000, sutPQ.Count());
         }
 
-        
         [Test]
         public void PriorityQueue_Adding10000ValuesAndThenPopingThem_CountIsCorrect()
         {
             PriorityQueue<int> sutPQ = new PriorityQueue<int>();
 
-            Random r = new Random();
-            for (int i = 0; i < 10000; i++)
-            {
-                sutPQ.Add(r.Next(0, i));
-            }
+            Add10000RandomPositiveValues(sutPQ);
 
             for (int i = 0; i < 10000; i++)
             {
@@ -66,14 +57,9 @@ namespace Tests
         public void PriorityQueue_Adding10000ValuesAndPopingThem_AllNumbersComingOutAreEqualOrAscendingFromPrevious()
         {
             PriorityQueue<int> sutPQ = new PriorityQueue<int>();
-            
-            Random r = new Random();
-            
-            for (int i = 0; i < 10000; i++)
-            {
-                sutPQ.Add(r.Next(0, i));
-            }
-            
+
+            Add10000RandomPositiveValues(sutPQ);
+
             var prev = sutPQ.Pop();
             
             while (sutPQ.NumOfNodes > 0)
@@ -93,12 +79,7 @@ namespace Tests
         {
             PriorityQueue<int> sutPQ = new PriorityQueue<int>();
 
-            Random r = new Random();
-
-            for (int i = 0; i < 10000; i++)
-            {
-                sutPQ.Add(r.Next(-1000, i));
-            }
+            Add10000RandomNegativeValues(sutPQ);
 
             var prev = sutPQ.Pop();
 
@@ -114,52 +95,20 @@ namespace Tests
             Assert.Pass();
         }
 
-
-        [Test]
-        public void PriorityQueue_AddingThreeValues_RootIsCorrectAndParentChildRelationsAreCorrect()
-        {
-            PriorityQueue<int> sutPQ = new PriorityQueue<int>();
-            sutPQ.Add(1);
-            sutPQ.Add(2);
-            sutPQ.Add(3);
-
-            Assert.AreEqual(1, sutPQ.Root.Value);
-
-            Assert.AreEqual(2, sutPQ.Root.LeftChild.Value);
-            Assert.AreEqual(3, sutPQ.Root.RightChild.Value);
-
-            Assert.AreEqual(1, sutPQ.Root.LeftChild.Parent.Value);
-            Assert.AreEqual(1, sutPQ.Root.RightChild.Parent.Value);
-
-            Assert.AreEqual(null, sutPQ.Root.LeftChild.LeftChild);
-            Assert.AreEqual(null, sutPQ.Root.LeftChild.RightChild);
-
-            Assert.AreEqual(null, sutPQ.Root.RightChild.LeftChild);
-            Assert.AreEqual(null, sutPQ.Root.RightChild.RightChild);
-
-        }
-
-
         [Test]
         public void PriorityQueue_UsingPeekMultipleTimes_IsCorrectAndDoesNotAffectCount()
         {
             PriorityQueue<int> sutPQ = new PriorityQueue<int>();
-            sutPQ.Add(2);
-            sutPQ.Add(3);
-            sutPQ.Add(4);
-            sutPQ.Add(5);
-            sutPQ.Add(6);
-            sutPQ.Add(7);
-            sutPQ.Add(8);
-            sutPQ.Add(9);
-            sutPQ.Add(1);
 
-            Assert.AreEqual(1, sutPQ.Root.Value);
-            Assert.AreEqual(1, sutPQ.Peek());
-            Assert.AreEqual(1, sutPQ.Peek());
-            Assert.AreEqual(1, sutPQ.Peek());
-            Assert.AreEqual(1, sutPQ.Peek());
-            Assert.AreEqual(9, sutPQ.Count());
+            Add10000RandomPositiveValues(sutPQ);
+            sutPQ.Add(-1);
+
+            Assert.AreEqual(-1, sutPQ.Peek());
+            Assert.AreEqual(-1, sutPQ.Peek());
+            Assert.AreEqual(-1, sutPQ.Peek());
+            Assert.AreEqual(-1, sutPQ.Peek());
+            
+            Assert.AreEqual(10001, sutPQ.Count());
             
         }
 
@@ -168,31 +117,20 @@ namespace Tests
         {
             PriorityQueue<int> sutPQ = new PriorityQueue<int>();
 
-            Random r = new Random();
-
-            for (int i = 0; i < 10000; i++)
-            {
-                sutPQ.Add(r.Next(0, i));
-            }
+            Add10000RandomPositiveValues(sutPQ);
             
             Assert.AreEqual(10000, sutPQ.Count());
 
             sutPQ.Pop();
             sutPQ.Pop();
             sutPQ.Pop();
-            sutPQ.Add(r.Next(0, 1000));
-
-            Assert.AreEqual(9998, sutPQ.Count());
-
+            sutPQ.Peek();
+            sutPQ.Peek();
+            sutPQ.Add(10);
+            sutPQ.Add(10);
             sutPQ.Peek();
 
-            Assert.AreEqual(9998, sutPQ.Count());
-
-            sutPQ.Add(r.Next(0, 1000));
-            sutPQ.Add(r.Next(0, 1000));
-
-            Assert.AreEqual(10000, sutPQ.Count());
-
+            Assert.AreEqual(9999, sutPQ.Count());
 
         }
 
@@ -201,10 +139,7 @@ namespace Tests
         {
             PriorityQueue<int> sutPQ = new PriorityQueue<int>();
 
-            for (int i = 0; i < 10000; i++)
-            {
-                sutPQ.Add(5);
-            }
+            Add10000EqualValues(sutPQ);
 
             Assert.AreEqual(10000, sutPQ.Count());
         }
@@ -220,6 +155,32 @@ namespace Tests
             }
 
             Assert.AreEqual(10000, sutPQ.Count());
+        }
+
+        public static void Add10000RandomPositiveValues(PriorityQueue<int> somePQ)
+        {
+            Random r = new Random();
+            for (int i = 0; i < 10000; i++)
+            {
+                somePQ.Add(r.Next(0, i));
+            }
+        }
+
+        public static void Add10000RandomNegativeValues(PriorityQueue<int> somePQ)
+        {
+            Random r = new Random();
+            for (int i = 0; i < 10000; i++)
+            {
+                somePQ.Add(r.Next(-1000, 0));
+            }
+        }
+
+        public static void Add10000EqualValues(PriorityQueue<int> somePQ)
+        {
+            for (int i = 0; i < 10000; i++)
+            {
+                somePQ.Add(5);
+            }
         }
 
     }
